@@ -26,7 +26,6 @@ router.post('/notes', (req, res) => {
             }
             let fileData = JSON.parse(data);
             fileData.push(note);
-            console.log(fileData);
             fs.writeFile(path.join(__dirname,'../../db/db.json'), JSON.stringify(fileData), (err) => {
                 if (err) {
                     res.send(err);
@@ -41,7 +40,30 @@ router.post('/notes', (req, res) => {
 });
 
 router.delete('/notes/:id', (req, res) => {
-
+    if (req.params.id) {
+        let uuid = req.params.id;
+        fs.readFile(path.join(__dirname,'../../db/db.json'), 'utf-8', (err, data) => {
+            if (err) {
+                res.send(err);
+            }
+            let fileData = JSON.parse(data);
+            for (let i = 0; i < fileData.length; i++) {
+                if (fileData[i].uuid === uuid) {
+                    fileData.splice(i, 1);
+                    break;
+                }
+            }
+            fs.writeFile(path.join(__dirname,'../../db/db.json'), JSON.stringify(fileData), (err) => {
+                if (err) {
+                    res.send(err);
+                }
+                res.status(200).send()
+            });
+        });
+    }
+    else {
+        res.status(400).json('Request must contain a note id');
+    }
 });
 
 module.exports = router;
