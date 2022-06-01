@@ -1,8 +1,15 @@
 const router = require('express').Router();
+const fs = require('fs');
+const path = require('path');
+
 
 router.get('/notes', (req, res) => {
-    // res.sendFile(path.join(__dirname, '/public/notes.html'));
-
+    fs.readFile(path.join(__dirname,'../../db/db.json'), 'utf-8', (err, data) => {
+        if (err) {
+            res.send(err);
+        }
+        res.send(data);
+    });
 });
 
 router.post('/notes', (req, res) => {
